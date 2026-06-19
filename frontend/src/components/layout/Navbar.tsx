@@ -49,7 +49,7 @@ export function Navbar({ isPublic = false }: NavbarProps) {
         <div className={styles.desktopActions}>
           {isAuthenticated ? (
             <>
-              <span className={styles.userEmail}>{user?.name}</span>
+              <span className={styles.userEmail}>{user?.fullName}</span>
               <Button variant="secondary" size="sm" onClick={handleLogout}>
                 Sign out
               </Button>

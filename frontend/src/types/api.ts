@@ -15,6 +15,27 @@ export interface ApiErrorResponse {
   error: ApiErrorBody;
 }
 
+// ─── Auth shapes (from openapi.yaml PublicUser / AuthResponse) ────────────────
+
+export type UserRole = 'user' | 'reviewer' | 'admin';
+
+export interface PublicUser {
+  id: number;
+  fullName: string;
+  email: string;
+  role: UserRole;
+}
+
+export interface AuthResponse {
+  user: PublicUser;
+  accessToken: string;
+  expiresIn: string;
+}
+
+export interface CurrentUserResponse {
+  user: PublicUser;
+}
+
 // ─── Health endpoint response shapes (from openapi.yaml) ─────────────────────
 
 export interface HealthResponse {

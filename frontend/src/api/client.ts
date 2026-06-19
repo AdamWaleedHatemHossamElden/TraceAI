@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { tokenStore } from '../utils/tokenStore';
 
 // Base URL: /api in development (Vite proxy forwards to http://localhost:5000)
 // Override with VITE_API_BASE_URL in production.
@@ -11,14 +12,16 @@ const client = axios.create({
 });
 
 // ─── Request interceptor ──────────────────────────────────────────────────────
-// TODO: Attach JWT access token when the auth backend is ready.
-// Replace the comment block below with:
-//   const token = tokenStore.get();
-//   if (token) config.headers.Authorization = `Bearer ${token}`;
+// Attaches the Bearer token from sessionStorage to every outgoing request.
+// If no token is stored the Authorization header is omitted, leaving the
+// endpoint to return 401 as normal.
 
 client.interceptors.request.use(
   (config) => {
-    // Placeholder for token attachment
+    const token = tokenStore.get();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => Promise.reject(error)

@@ -17,7 +17,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // Redirect to original destination after login, or fall back to /dashboard
+  // Redirect to the originally requested page after login, or fall back to /dashboard.
   const from = (location.state as { from?: Location })?.from?.pathname ?? '/dashboard';
 
   async function handleSubmit(e: FormEvent) {
@@ -82,10 +82,6 @@ export function LoginPage() {
           Sign in
         </Button>
       </form>
-
-      <p className={styles.mockNote}>
-        ⚠ Authentication is mocked. Any email and password will work.
-      </p>
     </AuthLayout>
   );
 }

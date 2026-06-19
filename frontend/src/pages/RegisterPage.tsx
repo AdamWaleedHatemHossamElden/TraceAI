@@ -12,7 +12,7 @@ export function RegisterPage() {
   const { register, isLoading } = useAuth();
   const navigate = useNavigate();
 
-  const [name, setName] = useState('');
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -21,7 +21,9 @@ export function RegisterPage() {
 
   function validate(): boolean {
     const errors: Record<string, string> = {};
-    if (!name.trim()) errors.name = 'Full name is required.';
+    if (!fullName.trim()) errors.fullName = 'Full name is required.';
+    else if (fullName.trim().length < 2)
+      errors.fullName = 'Full name must be at least 2 characters.';
     if (!email.trim()) errors.email = 'Email address is required.';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       errors.email = 'Enter a valid email address.';
@@ -36,10 +38,11 @@ export function RegisterPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError('');
+    setFieldErrors({});
     if (!validate()) return;
 
     try {
-      await register(name, email, password);
+      await register(fullName, email, password);
       navigate('/dashboard');
     } catch (err) {
       setError(parseApiError(err));
@@ -64,9 +67,9 @@ export function RegisterPage() {
         <Input
           label="Full name"
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          error={fieldErrors.name}
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          error={fieldErrors.fullName}
           autoComplete="name"
           placeholder="Adam Hatem"
           required
@@ -115,10 +118,6 @@ export function RegisterPage() {
           Create account
         </Button>
       </form>
-
-      <p className={styles.mockNote}>
-        ⚠ Authentication is mocked. No data is sent to the backend.
-      </p>
     </AuthLayout>
   );
 }

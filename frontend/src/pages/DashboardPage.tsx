@@ -13,7 +13,7 @@ export function DashboardPage() {
         <div className={styles.welcome}>
           <div>
             <h1 className={styles.pageTitle}>
-              Welcome back{user?.name ? `, ${user.name}` : ''}
+              Welcome back{user?.fullName ? `, ${user.fullName}` : ''}
             </h1>
             <p className={styles.pageSubtitle}>
               TraceAI Phase 1 — Foundation. The system health monitor below
