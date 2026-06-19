@@ -36,6 +36,110 @@ Response:
 }
 ```
 
+### `POST /api/auth/register`
+Creates a public user account with the `user` role and returns an access token.
+
+Request:
+```json
+{
+  "fullName": "Adam Hatem",
+  "email": "adam@example.com",
+  "password": "StrongPassword123!"
+}
+```
+
+Success response:
+```json
+{
+  "user": {
+    "id": 1,
+    "fullName": "Adam Hatem",
+    "email": "adam@example.com",
+    "role": "user"
+  },
+  "accessToken": "...",
+  "expiresIn": "1h"
+}
+```
+
+Duplicate email response:
+```json
+{
+  "error": {
+    "code": "EMAIL_ALREADY_EXISTS",
+    "message": "An account with this email already exists.",
+    "details": []
+  }
+}
+```
+
+### `POST /api/auth/login`
+Authenticates a user and returns an access token.
+
+Request:
+```json
+{
+  "email": "adam@example.com",
+  "password": "StrongPassword123!"
+}
+```
+
+Success response:
+```json
+{
+  "user": {
+    "id": 1,
+    "fullName": "Adam Hatem",
+    "email": "adam@example.com",
+    "role": "user"
+  },
+  "accessToken": "...",
+  "expiresIn": "1h"
+}
+```
+
+Invalid credentials response:
+```json
+{
+  "error": {
+    "code": "INVALID_CREDENTIALS",
+    "message": "Email or password is incorrect.",
+    "details": []
+  }
+}
+```
+
+### `GET /api/auth/me`
+Returns the current user from MySQL.
+
+Required header:
+```http
+Authorization: Bearer <access-token>
+```
+
+Success response:
+```json
+{
+  "user": {
+    "id": 1,
+    "fullName": "Adam Hatem",
+    "email": "adam@example.com",
+    "role": "user"
+  }
+}
+```
+
+Unauthorized response:
+```json
+{
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Authentication is required.",
+    "details": []
+  }
+}
+```
+
 ### `GET /api/health/database`
 Runs a simple MySQL connectivity check.
 

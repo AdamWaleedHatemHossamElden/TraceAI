@@ -21,6 +21,15 @@ const readString = (name: string, fallback: string): string => {
   return process.env[name] || fallback;
 };
 
+const readRequiredString = (name: string): string => {
+  const value = process.env[name];
+  if (!value || value.trim() === "") {
+    throw new Error(`Environment variable ${name} is required.`);
+  }
+
+  return value;
+};
+
 export const env = {
   nodeEnv: readString("NODE_ENV", "development"),
   port: readNumber("BACKEND_PORT", 5000),
@@ -32,7 +41,8 @@ export const env = {
     user: readString("DATABASE_USER", "traceai_user"),
     password: readString("DATABASE_PASSWORD", "")
   },
-  jwtSecret: readString("JWT_SECRET", "replace_with_local_secret"),
+  jwtSecret: readRequiredString("JWT_SECRET"),
+  jwtAccessTokenExpiresIn: readString("JWT_ACCESS_TOKEN_EXPIRES_IN", "1h"),
   aiServiceUrl: readString("AI_SERVICE_URL", "http://localhost:8000"),
   uploadStoragePath: readString("UPLOAD_STORAGE_PATH", "./storage/uploads")
 };
