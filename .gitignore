@@ -33,3 +33,6 @@ temp/
 Thumbs.db
 .vscode/
 .idea/
+
+# Private local workflow guide
+Docs/reference/TraceAI_Codex_Claude_Development_Workflow.pdf
