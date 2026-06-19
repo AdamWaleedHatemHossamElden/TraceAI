@@ -1,0 +1,21 @@
+import cors from "cors";
+import express from "express";
+import helmet from "helmet";
+
+import { env } from "./config/env";
+import { errorMiddleware } from "./middleware/error.middleware";
+import { healthRouter } from "./routes/health.routes";
+
+export const createApp = () => {
+  const app = express();
+
+  app.use(helmet());
+  app.use(cors());
+  app.use(express.json({ limit: "1mb" }));
+
+  app.use(`${env.apiPrefix}/health`, healthRouter);
+
+  app.use(errorMiddleware);
+
+  return app;
+};

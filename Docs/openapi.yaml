@@ -1,0 +1,130 @@
+openapi: 3.1.0
+info:
+  title: TraceAI API
+  version: 0.1.0
+  description: Phase 1 API contract for the TraceAI backend.
+servers:
+  - url: http://localhost:5000/api
+    description: Local backend API
+paths:
+  /health:
+    get:
+      summary: Backend health check
+      operationId: getBackendHealth
+      tags:
+        - Health
+      responses:
+        "200":
+          description: Backend service is available.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+  /health/database:
+    get:
+      summary: Database health check
+      operationId: getDatabaseHealth
+      tags:
+        - Health
+      responses:
+        "200":
+          description: Database connection is available.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DatabaseHealthResponse"
+        "503":
+          description: Database connection is unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /health/ai-service:
+    get:
+      summary: AI service health check
+      operationId: getAiServiceHealth
+      tags:
+        - Health
+      responses:
+        "200":
+          description: AI service is available.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiServiceHealthResponse"
+        "503":
+          description: AI service is unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - service
+        - timestamp
+      properties:
+        status:
+          type: string
+          example: ok
+        service:
+          type: string
+          example: traceai-backend
+        timestamp:
+          type: string
+          format: date-time
+    DatabaseHealthResponse:
+      type: object
+      required:
+        - status
+        - service
+      properties:
+        status:
+          type: string
+          example: ok
+        service:
+          type: string
+          example: traceai-database
+    AiServiceHealthResponse:
+      type: object
+      required:
+        - status
+        - service
+      properties:
+        status:
+          type: string
+          example: ok
+        service:
+          type: string
+          example: traceai-ai-service
+    ApiError:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              example: VALIDATION_ERROR
+            message:
+              type: string
+              example: The request contains invalid fields.
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    example: email
+                  message:
+                    type: string
+                    example: Enter a valid email.
