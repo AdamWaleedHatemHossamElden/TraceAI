@@ -140,6 +140,103 @@ Unauthorized response:
 }
 ```
 
+## Project Endpoints
+
+All project endpoints require:
+```http
+Authorization: Bearer <access-token>
+```
+
+### `POST /api/projects`
+Creates a project for the authenticated user.
+
+Request:
+```json
+{
+  "name": "Project name",
+  "description": "Optional description"
+}
+```
+
+Success response:
+```json
+{
+  "project": {
+    "id": 1,
+    "name": "Project name",
+    "description": "Optional description",
+    "createdAt": "2026-06-20T00:00:00.000Z",
+    "updatedAt": "2026-06-20T00:00:00.000Z"
+  }
+}
+```
+
+### `GET /api/projects`
+Returns projects owned by the authenticated user, ordered by most recently updated.
+
+Success response:
+```json
+{
+  "projects": []
+}
+```
+
+### `GET /api/projects/:projectId`
+Returns one project if it belongs to the authenticated user.
+
+Success response:
+```json
+{
+  "project": {
+    "id": 1,
+    "name": "Project name",
+    "description": "Optional description",
+    "createdAt": "2026-06-20T00:00:00.000Z",
+    "updatedAt": "2026-06-20T00:00:00.000Z"
+  }
+}
+```
+
+### `PATCH /api/projects/:projectId`
+Updates one or more allowed project fields.
+
+Request:
+```json
+{
+  "name": "Updated project name",
+  "description": null
+}
+```
+
+Success response:
+```json
+{
+  "project": {
+    "id": 1,
+    "name": "Updated project name",
+    "description": null,
+    "createdAt": "2026-06-20T00:00:00.000Z",
+    "updatedAt": "2026-06-20T00:00:00.000Z"
+  }
+}
+```
+
+### `DELETE /api/projects/:projectId`
+Deletes a project if it belongs to the authenticated user.
+
+Success response: `204 No Content`
+
+Missing or unauthorized project response:
+```json
+{
+  "error": {
+    "code": "PROJECT_NOT_FOUND",
+    "message": "Project was not found.",
+    "details": []
+  }
+}
+```
+
 ### `GET /api/health/database`
 Runs a simple MySQL connectivity check.
 

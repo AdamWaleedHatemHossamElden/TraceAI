@@ -90,6 +90,160 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiError"
+  /projects:
+    post:
+      summary: Create a project
+      operationId: createProject
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectRequest"
+      responses:
+        "201":
+          description: Project created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectResponse"
+        "400":
+          description: Request validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    get:
+      summary: List projects
+      operationId: listProjects
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Projects owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectListResponse"
+        "401":
+          description: Authentication is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /projects/{projectId}:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    get:
+      summary: Get a project
+      operationId: getProject
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Project returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectResponse"
+        "400":
+          description: Project id is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Project missing or not owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    patch:
+      summary: Update a project
+      operationId: updateProject
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectRequest"
+      responses:
+        "200":
+          description: Project updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectResponse"
+        "400":
+          description: Request validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Project missing or not owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    delete:
+      summary: Delete a project
+      operationId: deleteProject
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Project deleted successfully.
+        "400":
+          description: Project id is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Project missing or not owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
   /health:
     get:
       summary: Backend health check
@@ -142,6 +296,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiError"
 components:
+  parameters:
+    ProjectId:
+      name: projectId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+      description: Positive project id.
   securitySchemes:
     bearerAuth:
       type: http
@@ -235,6 +398,81 @@ components:
       properties:
         user:
           $ref: "#/components/schemas/PublicUser"
+    Project:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: Project name
+        description:
+          type:
+            - string
+            - "null"
+          example: Optional description
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreateProjectRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: Project name
+        description:
+          type:
+            - string
+            - "null"
+          example: Optional description
+    UpdateProjectRequest:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: Updated project name
+        description:
+          type:
+            - string
+            - "null"
+          example: Updated description
+    ProjectResponse:
+      type: object
+      required:
+        - project
+      properties:
+        project:
+          $ref: "#/components/schemas/Project"
+    ProjectListResponse:
+      type: object
+      required:
+        - projects
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: "#/components/schemas/Project"
     HealthResponse:
       type: object
       required:
