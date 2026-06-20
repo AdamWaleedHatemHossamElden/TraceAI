@@ -1,10 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import styles from './DashboardPage.module.css';
 import { AppLayout } from '../components/layout/AppLayout';
 import { SystemHealth } from '../components/health/SystemHealth';
+import { Button } from '../components/ui/Button';
 import { useAuth } from '../hooks/useAuth';
 
 export function DashboardPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <AppLayout>
@@ -31,8 +34,16 @@ export function DashboardPage() {
             <p className={styles.placeholderIcon}>⬢</p>
             <p className={styles.placeholderTitle}>Projects</p>
             <p className={styles.placeholderBody}>
-              Create and manage verification projects. Available in Phase 2.
+              Create and manage verification projects that organise your
+              AI-response analyses.
             </p>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => navigate('/projects')}
+            >
+              Go to Projects
+            </Button>
           </div>
           <div className={styles.placeholder}>
             <p className={styles.placeholderIcon}>◈</p>

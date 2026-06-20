@@ -6,6 +6,7 @@ import { LandingPage }   from '../pages/LandingPage';
 import { LoginPage }     from '../pages/LoginPage';
 import { RegisterPage }  from '../pages/RegisterPage';
 import { DashboardPage } from '../pages/DashboardPage';
+import { ProjectsPage }  from '../pages/ProjectsPage';
 import { NotFoundPage }  from '../pages/NotFoundPage';
 
 /** Redirects authenticated users away from login/register back to the dashboard */
@@ -47,7 +48,14 @@ export function AppRouter() {
           }
         />
 
-        {/* Future routes will be added here as backend phases are completed */}
+        <Route
+          path="/projects"
+          element={
+            <ProtectedRoute>
+              <ProjectsPage />
+            </ProtectedRoute>
+          }
+        />
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

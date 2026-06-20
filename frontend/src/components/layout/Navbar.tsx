@@ -40,6 +40,7 @@ export function Navbar({ isPublic = false }: NavbarProps) {
             isAuthenticated && (
               <>
                 <Link to="/dashboard" className={styles.navLink}>Dashboard</Link>
+                <Link to="/projects" className={styles.navLink}>Projects</Link>
               </>
             )
           )}
@@ -90,9 +91,14 @@ export function Navbar({ isPublic = false }: NavbarProps) {
             </>
           ) : (
             isAuthenticated && (
-              <Link to="/dashboard" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
-                Dashboard
-              </Link>
+              <>
+                <Link to="/dashboard" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+                  Dashboard
+                </Link>
+                <Link to="/projects" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+                  Projects
+                </Link>
+              </>
             )
           )}
           <div className={styles.mobileDivider} />

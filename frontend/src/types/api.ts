@@ -36,6 +36,34 @@ export interface CurrentUserResponse {
   user: PublicUser;
 }
 
+// ─── Project shapes ───────────────────────────────────────────────────────────
+
+export interface Project {
+  id: number;
+  name: string;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProjectResponse {
+  project: Project;
+}
+
+export interface ProjectsResponse {
+  projects: Project[];
+}
+
+export interface CreateProjectInput {
+  name: string;
+  description?: string | null;
+}
+
+export interface UpdateProjectInput {
+  name?: string;
+  description?: string | null;
+}
+
 // ─── Health endpoint response shapes (from openapi.yaml) ─────────────────────
 
 export interface HealthResponse {

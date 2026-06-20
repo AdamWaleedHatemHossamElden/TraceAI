@@ -10,8 +10,8 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { to: '/dashboard', label: 'Dashboard', icon: '⬡' },
-  // These routes will be added in later phases
-  { to: '/projects', label: 'Projects', icon: '⬢', disabled: true },
+  { to: '/projects', label: 'Projects', icon: '⬢' },
+  // Analyses and Reviews will be enabled in later backend phases
   { to: '/analyses', label: 'Analyses', icon: '◈', disabled: true },
   { to: '/reviews', label: 'Reviews', icon: '◉', disabled: true },
 ];
