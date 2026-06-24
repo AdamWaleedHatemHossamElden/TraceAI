@@ -44,5 +44,6 @@ export const env = {
   jwtSecret: readRequiredString("JWT_SECRET"),
   jwtAccessTokenExpiresIn: readString("JWT_ACCESS_TOKEN_EXPIRES_IN", "1h"),
   aiServiceUrl: readString("AI_SERVICE_URL", "http://localhost:8000"),
-  uploadStoragePath: readString("UPLOAD_STORAGE_PATH", "./storage/uploads")
+  uploadStoragePath: readString("UPLOAD_STORAGE_PATH", "./storage/uploads"),
+  uploadMaxFileSizeBytes: readNumber("UPLOAD_MAX_FILE_SIZE_BYTES", 10 * 1024 * 1024)
 };

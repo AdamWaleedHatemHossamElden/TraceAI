@@ -6,6 +6,7 @@ import { env } from "./config/env";
 import { errorMiddleware } from "./middleware/error.middleware";
 import { analysisRouter } from "./routes/analysis.routes";
 import { authRouter } from "./routes/auth.routes";
+import { documentRouter } from "./routes/document.routes";
 import { healthRouter } from "./routes/health.routes";
 import { projectRouter } from "./routes/project.routes";
 
@@ -18,6 +19,7 @@ export const createApp = () => {
 
   app.use(`${env.apiPrefix}/analyses`, analysisRouter);
   app.use(`${env.apiPrefix}/auth`, authRouter);
+  app.use(`${env.apiPrefix}/documents`, documentRouter);
   app.use(`${env.apiPrefix}/health`, healthRouter);
   app.use(`${env.apiPrefix}/projects`, projectRouter);
 

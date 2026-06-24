@@ -348,6 +348,146 @@ Missing or unauthorized analysis response:
 }
 ```
 
+## Document Endpoints
+
+All document endpoints require:
+```http
+Authorization: Bearer <access-token>
+```
+
+Supported uploads:
+- `application/pdf`
+- `text/plain`
+
+Default maximum upload size: `10 MB`, configurable with `UPLOAD_MAX_FILE_SIZE_BYTES`.
+
+List and detail responses never expose `storageKey` or absolute filesystem paths.
+
+### `POST /api/documents`
+Uploads an evidence document into a project owned by the authenticated user, extracts text, chunks it, and returns document metadata.
+
+Content type:
+```http
+multipart/form-data
+```
+
+Fields:
+- `projectId`: positive integer
+- `file`: one PDF or plain-text file
+
+Success response:
+```json
+{
+  "document": {
+    "id": 1,
+    "projectId": 1,
+    "projectName": "Climate Verification",
+    "originalFilename": "evidence.pdf",
+    "mimeType": "application/pdf",
+    "fileSizeBytes": 123456,
+    "processingStatus": "processed",
+    "chunkCount": 4,
+    "createdAt": "2026-06-20T10:00:00.000Z",
+    "updatedAt": "2026-06-20T10:00:00.000Z"
+  }
+}
+```
+
+### `GET /api/documents`
+Returns documents from projects owned by the authenticated user, newest first.
+
+Optional filter:
+```http
+GET /api/documents?projectId=1
+```
+
+Success response:
+```json
+{
+  "documents": []
+}
+```
+
+### `GET /api/documents/:documentId`
+Returns metadata for one owned document. Extracted chunk content is not included.
+
+Success response:
+```json
+{
+  "document": {
+    "id": 1,
+    "projectId": 1,
+    "projectName": "Climate Verification",
+    "originalFilename": "evidence.pdf",
+    "mimeType": "application/pdf",
+    "fileSizeBytes": 123456,
+    "processingStatus": "processed",
+    "chunkCount": 4,
+    "createdAt": "2026-06-20T10:00:00.000Z",
+    "updatedAt": "2026-06-20T10:00:00.000Z"
+  }
+}
+```
+
+### `GET /api/documents/:documentId/content`
+Returns extracted chunks for a processed owned document.
+
+Success response:
+```json
+{
+  "document": {
+    "id": 1,
+    "projectId": 1,
+    "projectName": "Climate Verification",
+    "originalFilename": "evidence.pdf",
+    "mimeType": "application/pdf",
+    "fileSizeBytes": 123456,
+    "processingStatus": "processed",
+    "chunkCount": 4,
+    "createdAt": "2026-06-20T10:00:00.000Z",
+    "updatedAt": "2026-06-20T10:00:00.000Z"
+  },
+  "chunks": [
+    {
+      "id": 1,
+      "chunkIndex": 0,
+      "content": "Extracted evidence text.",
+      "pageNumber": null,
+      "charStart": 0,
+      "charEnd": 24
+    }
+  ]
+}
+```
+
+If content is unavailable:
+```json
+{
+  "error": {
+    "code": "DOCUMENT_NOT_PROCESSED",
+    "message": "Document content is not available yet.",
+    "details": []
+  }
+}
+```
+
+### `DELETE /api/documents/:documentId`
+Deletes an owned document and its stored file.
+
+Success response: `204 No Content`
+
+Missing or unauthorized document response:
+```json
+{
+  "error": {
+    "code": "DOCUMENT_NOT_FOUND",
+    "message": "Document was not found.",
+    "details": []
+  }
+}
+
+```
+
 ### `GET /api/health/database`
 Runs a simple MySQL connectivity check.
 

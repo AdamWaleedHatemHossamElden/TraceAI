@@ -424,6 +424,214 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiError"
+  /documents:
+    post:
+      summary: Upload an evidence document
+      operationId: uploadDocument
+      tags:
+        - Documents
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - projectId
+                - file
+              properties:
+                projectId:
+                  type: integer
+                  minimum: 1
+                file:
+                  type: string
+                  format: binary
+            encoding:
+              file:
+                contentType: application/pdf, text/plain
+      responses:
+        "201":
+          description: Document uploaded, extracted, and chunked successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentResponse"
+        "400":
+          description: Request, file, or multipart validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Project missing or not owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "413":
+          description: File exceeds the configured upload size limit.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "422":
+          description: Text could not be extracted from the uploaded document.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    get:
+      summary: List documents
+      operationId: listDocuments
+      tags:
+        - Documents
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: projectId
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          description: Optional owned project filter.
+      responses:
+        "200":
+          description: Documents in projects owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentListResponse"
+        "400":
+          description: Query validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Filter project missing or not owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /documents/{documentId}:
+    parameters:
+      - $ref: "#/components/parameters/DocumentId"
+    get:
+      summary: Get document metadata
+      operationId: getDocument
+      tags:
+        - Documents
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Document metadata returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentResponse"
+        "400":
+          description: Document id is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Document missing or not owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    delete:
+      summary: Delete a document
+      operationId: deleteDocument
+      tags:
+        - Documents
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Document deleted successfully.
+        "400":
+          description: Document id is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Document missing or not owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /documents/{documentId}/content:
+    parameters:
+      - $ref: "#/components/parameters/DocumentId"
+    get:
+      summary: Get extracted document chunks
+      operationId: getDocumentContent
+      tags:
+        - Documents
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Extracted chunks returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentContentResponse"
+        "400":
+          description: Document id is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Document missing or not owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "409":
+          description: Document has not been processed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
   /health:
     get:
       summary: Backend health check
@@ -493,6 +701,14 @@ components:
         type: integer
         minimum: 1
       description: Positive analysis id.
+    DocumentId:
+      name: documentId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+      description: Positive document id.
   securitySchemes:
     bearerAuth:
       type: http
@@ -843,6 +1059,119 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AnalysisListItem"
+    DocumentProcessingStatus:
+      type: string
+      enum:
+        - uploaded
+        - extracting
+        - processed
+        - failed
+      example: processed
+    Document:
+      type: object
+      description: Document metadata. The storage key and absolute filesystem path are never exposed.
+      required:
+        - id
+        - projectId
+        - projectName
+        - originalFilename
+        - mimeType
+        - fileSizeBytes
+        - processingStatus
+        - chunkCount
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          example: 1
+        projectId:
+          type: integer
+          example: 1
+        projectName:
+          type: string
+          example: Climate Verification
+        originalFilename:
+          type: string
+          example: evidence.pdf
+        mimeType:
+          type: string
+          enum:
+            - application/pdf
+            - text/plain
+          example: application/pdf
+        fileSizeBytes:
+          type: integer
+          example: 123456
+        processingStatus:
+          $ref: "#/components/schemas/DocumentProcessingStatus"
+        chunkCount:
+          type: integer
+          example: 4
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    DocumentChunk:
+      type: object
+      required:
+        - id
+        - chunkIndex
+        - content
+        - pageNumber
+        - charStart
+        - charEnd
+      properties:
+        id:
+          type: integer
+          example: 1
+        chunkIndex:
+          type: integer
+          example: 0
+        content:
+          type: string
+          example: Extracted evidence text.
+        pageNumber:
+          type:
+            - integer
+            - "null"
+          example: null
+        charStart:
+          type: integer
+          example: 0
+        charEnd:
+          type: integer
+          example: 24
+    DocumentResponse:
+      type: object
+      required:
+        - document
+      properties:
+        document:
+          $ref: "#/components/schemas/Document"
+    DocumentListResponse:
+      type: object
+      required:
+        - documents
+      properties:
+        documents:
+          type: array
+          items:
+            $ref: "#/components/schemas/Document"
+    DocumentContentResponse:
+      type: object
+      required:
+        - document
+        - chunks
+      properties:
+        document:
+          $ref: "#/components/schemas/Document"
+        chunks:
+          type: array
+          items:
+            $ref: "#/components/schemas/DocumentChunk"
     HealthResponse:
       type: object
       required:
