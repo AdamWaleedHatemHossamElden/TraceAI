@@ -7,6 +7,186 @@ servers:
   - url: http://localhost:5000/api
     description: Local backend API
 paths:
+  /analyses:
+    post:
+      summary: Create an analysis
+      operationId: createAnalysis
+      tags:
+        - Analyses
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAnalysisRequest"
+      responses:
+        "201":
+          description: Analysis created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResponse"
+        "400":
+          description: Request validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Project missing or not owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    get:
+      summary: List analyses
+      operationId: listAnalyses
+      tags:
+        - Analyses
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: projectId
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          description: Optional owned project filter.
+      responses:
+        "200":
+          description: Analyses in projects owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisListResponse"
+        "400":
+          description: Query validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Filter project missing or not owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /analyses/{analysisId}:
+    parameters:
+      - $ref: "#/components/parameters/AnalysisId"
+    get:
+      summary: Get an analysis
+      operationId: getAnalysis
+      tags:
+        - Analyses
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Analysis returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResponse"
+        "400":
+          description: Analysis id is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Analysis missing or not owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    patch:
+      summary: Update an analysis
+      operationId: updateAnalysis
+      tags:
+        - Analyses
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAnalysisRequest"
+      responses:
+        "200":
+          description: Analysis updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResponse"
+        "400":
+          description: Request validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Analysis missing or not owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    delete:
+      summary: Delete an analysis
+      operationId: deleteAnalysis
+      tags:
+        - Analyses
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Analysis deleted successfully.
+        "400":
+          description: Analysis id is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Analysis missing or not owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
   /auth/register:
     post:
       summary: Register a user
@@ -305,6 +485,14 @@ components:
         type: integer
         minimum: 1
       description: Positive project id.
+    AnalysisId:
+      name: analysisId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+      description: Positive analysis id.
   securitySchemes:
     bearerAuth:
       type: http
@@ -473,6 +661,188 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Project"
+    AnalysisStatus:
+      type: string
+      enum:
+        - draft
+        - queued
+        - processing
+        - completed
+        - failed
+      example: draft
+    Analysis:
+      type: object
+      required:
+        - id
+        - projectId
+        - projectName
+        - prompt
+        - aiResponse
+        - modelName
+        - topic
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          example: 1
+        projectId:
+          type: integer
+          example: 1
+        projectName:
+          type: string
+          example: Climate Verification
+        prompt:
+          type: string
+          minLength: 1
+          maxLength: 50000
+          example: What caused the recent temperature increase?
+        aiResponse:
+          type: string
+          minLength: 1
+          maxLength: 750000
+          example: The AI-generated answer to verify.
+        modelName:
+          type:
+            - string
+            - "null"
+          maxLength: 255
+          example: GPT-4
+        topic:
+          type:
+            - string
+            - "null"
+          maxLength: 255
+          example: Climate
+        status:
+          $ref: "#/components/schemas/AnalysisStatus"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AnalysisListItem:
+      type: object
+      required:
+        - id
+        - projectId
+        - projectName
+        - prompt
+        - modelName
+        - topic
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          example: 1
+        projectId:
+          type: integer
+          example: 1
+        projectName:
+          type: string
+          example: Climate Verification
+        prompt:
+          type: string
+          example: What caused the recent temperature increase?
+        modelName:
+          type:
+            - string
+            - "null"
+          example: GPT-4
+        topic:
+          type:
+            - string
+            - "null"
+          example: Climate
+        status:
+          $ref: "#/components/schemas/AnalysisStatus"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreateAnalysisRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - projectId
+        - prompt
+        - aiResponse
+      properties:
+        projectId:
+          type: integer
+          minimum: 1
+          example: 1
+        prompt:
+          type: string
+          minLength: 1
+          maxLength: 50000
+          example: What caused the recent temperature increase?
+        aiResponse:
+          type: string
+          minLength: 1
+          maxLength: 750000
+          example: The AI-generated answer to verify.
+        modelName:
+          type:
+            - string
+            - "null"
+          maxLength: 255
+          example: GPT-4
+        topic:
+          type:
+            - string
+            - "null"
+          maxLength: 255
+          example: Climate
+    UpdateAnalysisRequest:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        prompt:
+          type: string
+          minLength: 1
+          maxLength: 50000
+          example: Updated prompt
+        aiResponse:
+          type: string
+          minLength: 1
+          maxLength: 750000
+          example: Updated AI-generated answer.
+        modelName:
+          type:
+            - string
+            - "null"
+          maxLength: 255
+          example: GPT-4
+        topic:
+          type:
+            - string
+            - "null"
+          maxLength: 255
+          example: Climate
+    AnalysisResponse:
+      type: object
+      required:
+        - analysis
+      properties:
+        analysis:
+          $ref: "#/components/schemas/Analysis"
+    AnalysisListResponse:
+      type: object
+      required:
+        - analyses
+      properties:
+        analyses:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnalysisListItem"
     HealthResponse:
       type: object
       required:

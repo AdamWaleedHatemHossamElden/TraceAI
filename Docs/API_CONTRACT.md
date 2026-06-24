@@ -237,6 +237,117 @@ Missing or unauthorized project response:
 }
 ```
 
+## Analysis Endpoints
+
+All analysis endpoints require:
+```http
+Authorization: Bearer <access-token>
+```
+
+### `POST /api/analyses`
+Creates a draft analysis inside a project owned by the authenticated user.
+
+Request:
+```json
+{
+  "projectId": 1,
+  "prompt": "What caused the recent temperature increase?",
+  "aiResponse": "The AI-generated answer to verify.",
+  "modelName": "GPT-4",
+  "topic": "Climate"
+}
+```
+
+Success response:
+```json
+{
+  "analysis": {
+    "id": 1,
+    "projectId": 1,
+    "projectName": "Climate Verification",
+    "prompt": "What caused the recent temperature increase?",
+    "aiResponse": "The AI-generated answer to verify.",
+    "modelName": "GPT-4",
+    "topic": "Climate",
+    "status": "draft",
+    "createdAt": "2026-06-20T10:00:00.000Z",
+    "updatedAt": "2026-06-20T10:00:00.000Z"
+  }
+}
+```
+
+Missing or unauthorized project response:
+```json
+{
+  "error": {
+    "code": "PROJECT_NOT_FOUND",
+    "message": "Project was not found.",
+    "details": []
+  }
+}
+```
+
+### `GET /api/analyses`
+Returns analyses from projects owned by the authenticated user, ordered by most recently updated.
+
+Optional filter:
+```http
+GET /api/analyses?projectId=1
+```
+
+Success response:
+```json
+{
+  "analyses": [
+    {
+      "id": 1,
+      "projectId": 1,
+      "projectName": "Climate Verification",
+      "prompt": "What caused the recent temperature increase?",
+      "modelName": "GPT-4",
+      "topic": "Climate",
+      "status": "draft",
+      "createdAt": "2026-06-20T10:00:00.000Z",
+      "updatedAt": "2026-06-20T10:00:00.000Z"
+    }
+  ]
+}
+```
+
+### `GET /api/analyses/:analysisId`
+Returns one complete analysis, including `aiResponse`, when it belongs to the authenticated user.
+
+### `PATCH /api/analyses/:analysisId`
+Updates one or more allowed analysis fields.
+
+Request:
+```json
+{
+  "prompt": "Updated prompt",
+  "aiResponse": "Updated AI-generated answer.",
+  "modelName": null,
+  "topic": "Climate"
+}
+```
+
+Success response uses the same complete `analysis` shape as create/get.
+
+### `DELETE /api/analyses/:analysisId`
+Deletes one analysis when it belongs to the authenticated user.
+
+Success response: `204 No Content`
+
+Missing or unauthorized analysis response:
+```json
+{
+  "error": {
+    "code": "ANALYSIS_NOT_FOUND",
+    "message": "Analysis was not found.",
+    "details": []
+  }
+}
+```
+
 ### `GET /api/health/database`
 Runs a simple MySQL connectivity check.
 

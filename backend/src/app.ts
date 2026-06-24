@@ -4,6 +4,7 @@ import helmet from "helmet";
 
 import { env } from "./config/env";
 import { errorMiddleware } from "./middleware/error.middleware";
+import { analysisRouter } from "./routes/analysis.routes";
 import { authRouter } from "./routes/auth.routes";
 import { healthRouter } from "./routes/health.routes";
 import { projectRouter } from "./routes/project.routes";
@@ -15,6 +16,7 @@ export const createApp = () => {
   app.use(cors());
   app.use(express.json({ limit: "1mb" }));
 
+  app.use(`${env.apiPrefix}/analyses`, analysisRouter);
   app.use(`${env.apiPrefix}/auth`, authRouter);
   app.use(`${env.apiPrefix}/health`, healthRouter);
   app.use(`${env.apiPrefix}/projects`, projectRouter);
