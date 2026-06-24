@@ -49,8 +49,16 @@ export function DashboardPage() {
             <p className={styles.placeholderIcon}>◈</p>
             <p className={styles.placeholderTitle}>Analyses</p>
             <p className={styles.placeholderBody}>
-              Submit AI responses and view extracted claims. Available in Phase 2.
+              Submit AI responses for claim-level verification and track
+              their evidence review status.
             </p>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => navigate('/analyses')}
+            >
+              Go to Analyses
+            </Button>
           </div>
         </div>
       </div>

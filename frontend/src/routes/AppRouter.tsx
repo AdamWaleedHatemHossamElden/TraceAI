@@ -7,6 +7,7 @@ import { LoginPage }     from '../pages/LoginPage';
 import { RegisterPage }  from '../pages/RegisterPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { ProjectsPage }  from '../pages/ProjectsPage';
+import { AnalysesPage }  from '../pages/AnalysesPage';
 import { NotFoundPage }  from '../pages/NotFoundPage';
 
 /** Redirects authenticated users away from login/register back to the dashboard */
@@ -53,6 +54,15 @@ export function AppRouter() {
           element={
             <ProtectedRoute>
               <ProjectsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/analyses"
+          element={
+            <ProtectedRoute>
+              <AnalysesPage />
             </ProtectedRoute>
           }
         />

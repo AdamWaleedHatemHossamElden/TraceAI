@@ -41,6 +41,7 @@ export function Navbar({ isPublic = false }: NavbarProps) {
               <>
                 <Link to="/dashboard" className={styles.navLink}>Dashboard</Link>
                 <Link to="/projects" className={styles.navLink}>Projects</Link>
+                <Link to="/analyses" className={styles.navLink}>Analyses</Link>
               </>
             )
           )}
@@ -97,6 +98,9 @@ export function Navbar({ isPublic = false }: NavbarProps) {
                 </Link>
                 <Link to="/projects" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
                   Projects
+                </Link>
+                <Link to="/analyses" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+                  Analyses
                 </Link>
               </>
             )
