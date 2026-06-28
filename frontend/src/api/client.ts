@@ -22,6 +22,13 @@ client.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    // When the request body is FormData, remove the default 'application/json'
+    // Content-Type so the browser (via XHR) can supply the correct
+    // 'multipart/form-data; boundary=...' value including the boundary token.
+    // Setting it manually would omit the boundary and break multipart parsing.
+    if (config.data instanceof FormData) {
+      config.headers.delete('Content-Type');
+    }
     return config;
   },
   (error) => Promise.reject(error)

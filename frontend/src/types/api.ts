@@ -113,6 +113,53 @@ export interface UpdateAnalysisInput {
   topic?: string | null;
 }
 
+// ─── Document shapes ──────────────────────────────────────────────────────────
+
+export type DocumentProcessingStatus =
+  | 'uploaded'
+  | 'extracting'
+  | 'processed'
+  | 'failed';
+
+export interface DocumentSummary {
+  id: number;
+  projectId: number;
+  projectName: string;
+  originalFilename: string;
+  mimeType: 'application/pdf' | 'text/plain';
+  fileSizeBytes: number;
+  processingStatus: DocumentProcessingStatus;
+  chunkCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DocumentChunk {
+  id: number;
+  chunkIndex: number;
+  content: string;
+  pageNumber: number | null;
+  charStart: number | null;
+  charEnd: number | null;
+}
+
+export interface DocumentUploadResponse {
+  document: DocumentSummary;
+}
+
+export interface DocumentsListResponse {
+  documents: DocumentSummary[];
+}
+
+export interface DocumentDetailResponse {
+  document: DocumentSummary;
+}
+
+export interface DocumentContentResponse {
+  document: DocumentSummary;
+  chunks: DocumentChunk[];
+}
+
 // ─── Health endpoint response shapes (from openapi.yaml) ─────────────────────
 
 export interface HealthResponse {

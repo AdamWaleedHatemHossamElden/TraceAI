@@ -60,6 +60,21 @@ export function DashboardPage() {
               Go to Analyses
             </Button>
           </div>
+          <div className={styles.placeholder}>
+            <p className={styles.placeholderIcon}>◫</p>
+            <p className={styles.placeholderTitle}>Documents</p>
+            <p className={styles.placeholderBody}>
+              Upload PDF and plain text files to extract content that
+              grounds and supports AI-response verification.
+            </p>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => navigate('/documents')}
+            >
+              Go to Documents
+            </Button>
+          </div>
         </div>
       </div>
     </AppLayout>

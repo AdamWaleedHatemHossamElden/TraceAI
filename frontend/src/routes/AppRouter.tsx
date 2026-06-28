@@ -7,8 +7,9 @@ import { LoginPage }     from '../pages/LoginPage';
 import { RegisterPage }  from '../pages/RegisterPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { ProjectsPage }  from '../pages/ProjectsPage';
-import { AnalysesPage }  from '../pages/AnalysesPage';
-import { NotFoundPage }  from '../pages/NotFoundPage';
+import { AnalysesPage }   from '../pages/AnalysesPage';
+import { DocumentsPage }  from '../pages/DocumentsPage';
+import { NotFoundPage }   from '../pages/NotFoundPage';
 
 /** Redirects authenticated users away from login/register back to the dashboard */
 function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
@@ -63,6 +64,15 @@ export function AppRouter() {
           element={
             <ProtectedRoute>
               <AnalysesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/documents"
+          element={
+            <ProtectedRoute>
+              <DocumentsPage />
             </ProtectedRoute>
           }
         />

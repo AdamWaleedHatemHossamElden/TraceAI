@@ -12,6 +12,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/dashboard', label: 'Dashboard', icon: '⬡' },
   { to: '/projects', label: 'Projects', icon: '⬢' },
   { to: '/analyses', label: 'Analyses', icon: '◈' },
+  { to: '/documents', label: 'Documents', icon: '◫' },
   // Reviews will be enabled in a later backend phase
   { to: '/reviews', label: 'Reviews', icon: '◉', disabled: true },
 ];
